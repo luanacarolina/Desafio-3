@@ -1,0 +1,271 @@
+package challenge;
+
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
+public class Main {
+
+	// Quantas nacionalidades (coluna `nationality`) diferentes existem no arquivo?
+	public int q1() {
+		ArrayList<String> list = new ArrayList<String>();
+		try {
+			FileInputStream arquivo = new FileInputStream("/home/luana/codenation/java-3/src/main/resources/data.csv");
+			InputStreamReader input = new InputStreamReader(arquivo);
+			BufferedReader	br = new BufferedReader(input);
+			
+			String linha;
+			linha =br.readLine();
+			while(linha!=null) {
+				String[] jogador = linha.split(",");
+				String nationality = jogador[14];
+				list.add(nationality);
+				linha = br.readLine();
+			
+				
+			}
+			
+		}catch(Exception e){
+			System.out.println("Erro ao ler o arquivo");
+		}
+		
+		return list.size();
+	}
+
+	// Quantos clubes (coluna `club`) diferentes existem no arquivo?
+	// Obs: Existem jogadores sem clube.
+	public int q2() {
+		ArrayList<String> clubs = new ArrayList<String>();
+		try {
+			
+			FileInputStream arquivo = new FileInputStream("/home/luana/codenation/java-3/src/main/resources/data.csv");
+			InputStreamReader input = new InputStreamReader(arquivo);
+			BufferedReader br = new BufferedReader(input);
+			
+			String linha ;
+			linha = br.readLine();
+			while(linha!=null) {
+				
+				String jogador[] = linha.split(",");
+				if(jogador[3].trim().isEmpty()) {
+					linha = br.readLine();
+					continue;
+				}
+				
+				String club = jogador[3];
+				clubs.add(club);
+				linha = br.readLine();
+			}
+			
+		}catch(Exception e){
+			System.out.println("Erro ao ler o arquivo");
+		}
+		return clubs.size();
+	}
+
+	// Liste o nome completo (coluna `full_name`) dos 20 primeiros jogadores.
+	public List<String> q3() {
+		ArrayList<String> list = new ArrayList<String>();
+		try {
+			FileInputStream arquivo = new FileInputStream("/home/luana/codenation/java-3/src/main/resources/data.csv");
+			InputStreamReader input = new InputStreamReader(arquivo);
+			BufferedReader br = new BufferedReader(input);
+			
+			String linha;
+			linha = br.readLine();
+			for(int i = 0 ;i<20;i++) {
+				String jogador []=linha.split(",");
+				list.add(jogador[2]);
+				linha=br.readLine();
+				
+			}
+			
+		}catch(Exception e) {
+			System.out.println("Erro ao ler arquivo");
+		}
+		
+		return list;
+		
+		
+	}
+
+	// Quem são os top 10 jogadores que possuem as maiores cláusulas de rescisão?
+	// (utilize as colunas `full_name` e `eur_release_clause`)
+	public List<String> q4() {
+		ArrayList<Integer> releaseClause = new ArrayList<Integer>();
+		ArrayList<String> top10 = new ArrayList<String>();
+		List<String> top10names = new ArrayList<String>();
+		String[] nomes = new String[10];
+		
+		try {
+			
+			FileInputStream arquivo = new FileInputStream("/home/luana/codenation/java-3/src/main/resources/data.csv");
+			InputStreamReader input = new InputStreamReader(arquivo);
+			BufferedReader br = new BufferedReader(input);
+			
+			String linha;
+			linha= br.readLine();
+			while(linha!=null) {
+				String[]jogador = linha.split(",");
+				if(jogador[18].trim().isEmpty()) {
+					linha=br.readLine();
+					continue;
+				}
+				float releaseClauses= Float.parseFloat(jogador[18]);
+				releaseClause.add((int)releaseClauses);
+				linha=br.readLine();
+			}
+		}catch(Exception e) {
+			System.out.println("erro ao ler arquivo");
+		}
+		
+		Collections.sort(releaseClause);
+		Collections.reverse(releaseClause);
+		for(int i = 0;i<10;i++) {
+			top10.add(Integer.toString(releaseClause.get(i)));
+			top10names.add(null);
+		}
+		
+		try {
+			
+			FileInputStream arquivo = new FileInputStream("/home/luana/codenation/java-3/src/main/resources/data.csv");
+			InputStreamReader input = new InputStreamReader(arquivo);
+			BufferedReader br = new BufferedReader(input);
+			
+			String linha ;
+			linha = br.readLine();
+			while(linha!=null) {
+				String[]jogador=linha.split(",");
+				if(jogador[18].trim().isEmpty()) {
+					linha=br.readLine();
+					continue;
+				}
+				String releaseClauses=jogador[18].substring(0,jogador[18].length()-2);
+				for(String topRc:top10) {
+					if(topRc.equals(releaseClause)) {
+						nomes[top10.indexOf(topRc)]=jogador[2];
+					}
+				}
+				linha = br.readLine();
+			}
+			
+		}catch(Exception e) {
+			System.out.println("Erro ao ler arquivo");
+		}
+		top10names=Arrays.asList(nomes);
+		
+		return top10names;
+	}
+
+	// Quem são os 10 jogadores mais velhos (use como critério de desempate o campo `eur_wage`)?
+	// (utilize as colunas `full_name` e `birth_date`)
+	public List<String> q5() {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		List<Date> birthDates = new ArrayList<Date>();
+		ArrayList<String> top10 = new ArrayList<String>();
+		List<String> top10Names = new ArrayList<String>();
+		String[] nomes = new String[10];
+		
+		try {
+			FileInputStream arquivo = new FileInputStream("/home/luana/codenation/java-3/src/main/resources/data.csv");
+			InputStreamReader input = new InputStreamReader(arquivo);
+			BufferedReader br = new BufferedReader(input);
+			
+			String linha;
+			linha = br.readLine();
+			while(linha!=null) {
+				String[] jogador=linha.split(",");
+				String birthDate = jogador[8];
+				birthDates.add(sdf.parse(birthDate));
+				linha = br.readLine();
+			}
+		}catch(Exception e) {
+			System.out.println("Erro ao ler arquivo");
+		}
+		
+		Collections.sort(birthDates);
+		for(int i = 0;i<10;i++) {
+			String birth =sdf.format(birthDates.get(i));
+			top10.add(birth);
+		}
+		try {
+			FileInputStream arquivo = new FileInputStream("/home/luana/codenation/java-3/src/main/resources/data.csv");
+			InputStreamReader input = new InputStreamReader(arquivo);
+			BufferedReader br = new BufferedReader(input);
+			
+			String linha;
+			linha = br.readLine();
+			while(linha!=null) {
+				String[]jogador = linha.split(",");
+				String birthDate = jogador[8];
+				for(String data:top10) {
+					if(data.equals(birthDate)) {
+						nomes[top10.indexOf(data)]=jogador[2];
+					}
+				}
+				linha =br.readLine();
+			}
+			
+			
+		}catch(Exception e) {
+			System.out.println("Erro ao ler arquivo");
+		}
+		
+		top10Names =Arrays.asList(nomes);
+		
+		
+		return top10Names;
+	}
+	
+
+	// Conte quantos jogadores existem por idade. Para isso, construa um mapa onde as chaves são as idades e os valores a contagem.
+	// (utilize a coluna `age`)
+		public  Map<Integer, Integer> q6() {
+		Map<Integer, Integer>contIdade = new HashMap<>();
+		List<Integer> idades = new ArrayList<>();
+		try {
+			
+			FileInputStream arquivo = new FileInputStream("/home/luana/codenation/java-3/src/main/resources/data.csv");
+			InputStreamReader input = new InputStreamReader(arquivo);
+			BufferedReader br = new BufferedReader(input);
+			String linha;
+			linha = br.readLine();
+			
+			while(linha!=null) {
+				String jogador[]=linha.split(",");
+				if(jogador[6].trim().isEmpty()) {
+					linha=br.readLine();
+					continue;
+				}
+				String idade = jogador[6];
+				idades.add(Integer.parseInt(idade));
+				linha=br.readLine();
+			}
+			for(Integer idade:idades) {
+				if(contIdade.keySet().contains(idade)) {
+					contIdade.put(idade, contIdade.get(idade)+1);
+				}else {
+					contIdade.put(idade, 1);
+				}
+			}
+			
+		}catch(Exception e) {
+			System.out.println("Erro ao ler arquivo");
+		}
+		return contIdade ;
+	}
+		
+	}
+
+
